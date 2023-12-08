@@ -684,3 +684,6 @@ finding
 cope
 coped
 coping
+impact
+impacting
+important
