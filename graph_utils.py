@@ -1,7 +1,9 @@
 import networkx as nx
+import os
 import nltk
 import numpy as np
 import pandas as pd
+import random
 import matplotlib.pyplot as plt
 from nltk.stem import PorterStemmer
 from nltk.stem.snowball import SnowballStemmer
@@ -141,6 +143,56 @@ def localPageRankApprox(G) -> dict:
             PR_u[t] = PR_u[t-1] + ((1-alpha)*(alpha**t)/n)* totSum
         computed_centralities[u] = PR_u[r]
     return computed_centralities
+
+def improvedEstimateLCC(G, p) -> dict:
+    edges_list = G.edges
+    S =[]#sample of edges
+    #sono grafi piccoli e stanno in memoria 
+    t_S ={}
+    deg ={}
+    cc ={}
+    random.seed(os.urandom)
+    for v in G.nodes:
+        t_S[v]=0
+        deg[v] =0
+    
+    for edge in edges_list:
+        u = edge[0]
+        v = edge[1]
+        deg[v] +=1
+        deg[u] +=1
+        
+        N_S =[] #set of vertices
+        N_s_v =[]
+        for x in G.neighbors(v):
+            if (x,v) in S:
+                N_s_v.append(x)
+            elif (v,x) in S:
+                N_s_v.append(x)
+        
+        for x in G.neighbors(u):
+            if (u,x) in S:
+                if x in N_s_v:
+                    N_S.append(x)
+            elif(x,u) in S:
+                if x in N_s_v:
+                    N_S.append(x)
+        
+        for c in N_S:
+            t_S[c] +=1
+            t_S[u] +=1
+            t_S[v] +=1
+
+        if random.random()<p:
+            S.append(edge)
+    
+    for v in G.nodes:
+        cc[v] = (1/p**2)*2*t_S[v]/(deg[v]*(deg[v]-1))
+
+    return cc  
+
+
+    
 
                 
 

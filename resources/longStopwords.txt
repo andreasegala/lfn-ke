@@ -687,3 +687,9 @@ coping
 impact
 impacting
 important
+remark
+remarking
+remarked
+study
+studying
+studied
