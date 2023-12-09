@@ -191,6 +191,25 @@ def improvedEstimateLCC(G, p) -> dict:
 
     return cc  
 
+def approximateClosenessCentrality(G, k) -> dict:
+    s = {}
+    random.seed(os.urandom)
+    nodes_list = list(G.nodes)
+    n = len(nodes_list)
+    c={}
+    for v in nodes_list:
+        s[v] = 0
+    for i in range(1,k+1):
+        v_i= random.choice(nodes_list)
+        #solve single source shortest path for v_i
+        for v in nodes_list:
+            s[v] += (len(nx.shortest_path(G, v_i,v))-1)
+
+    for v in nodes_list:
+        c[v] = k*(n-1)/(n*s[v])
+
+    return c
+
 
     
 
