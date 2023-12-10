@@ -3,12 +3,15 @@ import nltk
 from graph_utils import GraphMaker
 import matplotlib.pyplot as plt
 import re
+import random
+import json
+import glob
 class Article:
-    def __init__(self, docID, abstract, category,keywords) -> None:
+    def __init__(self, docID, abstract, categories,keywords) -> None:
         self.docID= docID
         cleanAbstract =re.sub("['\",]", "", abstract) 
         self.abstract = cleanAbstract
-        self.category = category
+        self.categories = categories
         self.graph = nx.Graph()
         self.kw = keywords #che siano già da stemmare??
     
@@ -44,7 +47,31 @@ class Article:
 
     def toString(self) -> str:
         return ''
-    
+
+def parse_and_sample(path_to_dir, sample_size) -> list: #a list of obj Article?? Or is it better to store everything in a dictionary?
+    sampled_articles = []
+    random.seed(3101964)
+    path_to_dir_format = path_to_dir+"\*.json"
+    sampled_paths = random.choices(glob.glob(path_to_dir_format),k =sample_size)
+
+    for path in sampled_paths:
+        #scan file and gather information to build article object 
+        f= open(path,"r")
+        temp_dict = json.load(f)
+        
+        abstract = temp_dict["abstract"]
+        keywords =temp_dict["metadata"]["keywords"]
+        docID = temp_dict["docId"]
+        categories = temp_dict["metadata"]["subjareas"]
+        del temp_dict 
+        new_article = Article(docID, abstract, categories, keywords)
+        sampled_articles.append(new_article)
+
+    return sampled_articles
+
     
 
 
+
+    
+    

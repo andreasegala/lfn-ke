@@ -688,6 +688,7 @@ impact
 impacting
 important
 remark
+remarkable
 remarking
 remarked
 study

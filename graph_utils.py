@@ -102,6 +102,36 @@ class GraphMaker:
 
         return G   
 
+def printGraph(G)-> None:
+    
+    k=0.5  
+    font_size=26
+    pos = nx.spring_layout(G, k)
+
+    d = nx.degree(G)
+    node_sizes = []
+    for i in d:
+        _, value = i
+        node_sizes.append(value)
+        
+    color_list = []
+    for i in G.nodes:
+        #value = nltk.pos_tag([i])[0][1]
+        value = d[i]
+
+        #red nodes = the most important
+        if (value<=10):
+            color_list.append('yellow')
+        elif (value<=20):
+            color_list.append('red')
+        else:
+            color_list.append('blue')
+    
+    plt.figure(figsize=(40,40))
+    nx.draw(G, pos, node_size=[(v+1)*200 for v in node_sizes], with_labels=True, node_color=color_list, font_size=font_size)
+    plt.show()
+
+    
 def localPageRankApprox(G) -> dict:
     nodes_list = G.nodes
     n = len(nodes_list)
