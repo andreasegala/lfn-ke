@@ -25,7 +25,7 @@ class GraphMaker:
             self.stemmer = SnowballStemmer('english')
 
     #routine that builds the graph    
-    def buildGraph(self, text) -> nx.Graph:
+    def buildGraph(self, text, filename) -> nx.Graph:
         k=0.5
         
         font_size=26
@@ -45,7 +45,8 @@ class GraphMaker:
             temp = sent.split(' ')
             for word in temp: #stemming and adding stems
                 if self.stemmer.stem(word) not in words_list:
-                    words_list.append(self.stemmer.stem(word))
+                    if not (self.stemmer.stem(word)==""):
+                        words_list.append(self.stemmer.stem(word))
 
         df = pd.DataFrame(np.zeros(shape=(len(words_list),2)), columns=['Stems', 'neighbors'])
         df['Stems'] = words_list
@@ -66,15 +67,31 @@ class GraphMaker:
                 if stem in stemmed_sent:
                     ind = df[df['Stems']==stem].index[0]
                     df['neighbors'][ind]=[ss for ss in stemmed_sent if not(ss==stem)]
+                    try:
+                        float(str(df['neighbors'][ind]))
+                        if (df['neighbors'][ind]== 0):
+                            print("This stem will cause the mistake: "+ stem)
+                    except Exception:
+                        ops = 0
+                        del ops
+                        
 
+        #print(df)
         #fig = plt.figure(figsize=(30,20))
         G = nx.Graph()
         color_map=[]
         for i in range(len(df)):
             G.add_node(df['Stems'][i])
             color_map.append('blue')
-            for word in df['neighbors'][i]:
-                G.add_edges_from([(df['Stems'][i], word)])
+            #print("questa iterazione considera come vicini: "+ df['neighbors'][i])
+            try:
+                for word in df['neighbors'][i]:
+                    G.add_edges_from([(df['Stems'][i], word)])
+            except TypeError:
+                ops =0
+                del ops
+                #print("\n"+"I found problems in row containing stem "+ str(df['Stems'][i]))
+                
 
         return G   
 
