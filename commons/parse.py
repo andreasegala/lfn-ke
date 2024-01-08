@@ -6,6 +6,7 @@ import json
 import networkx as nx
 import re
 import commons.graph
+import nltk
 
 
 def update_allowed_forbidden_files():
@@ -30,7 +31,7 @@ def update_allowed_forbidden_files():
         file.close()
 
         # check the keys and mark as allowed or forbidden
-        # it saves whole relative paths (see line 14)
+        # it saves whole relative paths (see line 13)
         if all(key in json_file for key in required_keys) and all(key in json_file['metadata'] for key in required_metadata_keys):
             allowed_files.append(str(filename))
         else:
@@ -42,21 +43,28 @@ def update_allowed_forbidden_files():
     allowed_writer.close()
 
     # write forbidden file into a .txt file
-    # TODO (vedi linea 76) ma questo serve se salviamo gli allowed?
+    # TODO (vedi linea 75) ma questo serve se salviamo gli allowed?
     forbidden_writer = open(Path('resources/forbidden_files.txt'), 'w')
     forbidden_writer.write('\n'.join(forbidden_files))
     forbidden_writer.close()
 
 
 class Article:
-    def __init__(self, docID, abstract, categories, keywords, filename) -> None:
+    def __init__(self, docID, abstract, categories, keywords, filename, graphmaker) -> None:
         self.docID = docID
         cleanAbstract = re.sub("['\",]", '', abstract)
         self.abstract = cleanAbstract
         self.categories = categories
-        self.graph = nx.Graph()
+        self.graph = graphmaker.buildGraph(abstract)
         self.filename = filename
-        self.kw = keywords  # che siano già da stemmare??
+        #self.kw = keywords  # che siano già da stemmare??
+
+        kws = []
+        for keyword in keywords:
+            tokens = nltk.word_tokenize(keyword)
+            for token in tokens:
+                kws.append(graphmaker.stemmer.stem(token))
+        self.kw = kws
 
     def setGraph(self, graphmaker) -> None:
         self.graph = graphmaker.buildGraph(self.abstract)
@@ -68,11 +76,11 @@ class Article:
         return ''
 
 
-def parse_and_sample(sample_size) -> list: # list of Article objs
+def parse_and_sample(sample_size, graphmaker) -> list: # list of Article objs
     sampled_articles = []
     random.seed(3101960)
 
-    # TODO (vedi linea 46) serve avere forbidden list se abbiamo allowed list?
+    # TODO (vedi linea 45) serve avere forbidden list se abbiamo allowed list?
     # sample sample_size paths from the allowed ones
     with open(Path('resources/allowed_files.txt'), 'r') as handler:
         allowed_paths = [Path(line.rstrip()) for line in handler.readlines()]
@@ -92,7 +100,7 @@ def parse_and_sample(sample_size) -> list: # list of Article objs
             filename = path.name
 
             # create Article and append to sampled list
-            new_article = Article(docID, abstract, categories, keywords, filename)
+            new_article = Article(docID, abstract, categories, keywords, filename, graphmaker)
             sampled_articles.append(new_article)
 
     return sampled_articles
