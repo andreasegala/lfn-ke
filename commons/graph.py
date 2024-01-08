@@ -1,6 +1,6 @@
 # required libraries
 from matplotlib import pyplot as plt
-from nltk import PorterStemmer, SnowballStemmer
+from nltk import PorterStemmer, SnowballStemmer, LancasterStemmer
 from pathlib import Path
 import networkx as nx
 import nltk
@@ -19,8 +19,12 @@ class GraphMaker:
 
         if stemmer == 'POR':
             self.stemmer = PorterStemmer()
-        else:
+        elif stemmer == 'SNO':
             self.stemmer = SnowballStemmer('english')
+        elif stemmer == 'LAN':
+            self.stemmer = LancasterStemmer()
+        else:
+            raise Exception('Unknown stemmer! Available options: POR (Porter), SNO (Snowball, english), LAN (Lancaster)')
 
     def buildGraph(self, text) -> nx.Graph: # (andre) ho tolto parametro filename, non usato
         k = 0.5
@@ -78,7 +82,6 @@ class GraphMaker:
                 ops = 0
                 del ops
                 # print("\n"+"I found problems in row containing stem "+ str(df['Stems'][i]))
-
         return G
 
 
@@ -106,7 +109,7 @@ def printGraph(G) -> None:
         else:
             color_list.append('blue')
 
-    plt.figure(figsize=(40, 40))
+    plt.figure()#figsize=(40, 40))
     nx.draw(G, pos, node_size=[(v + 1) * 200 for v in node_sizes], with_labels=True, node_color=color_list,
             font_size=font_size)
     plt.show()
@@ -199,10 +202,15 @@ def improvedEstimateLCC(G, p) -> dict:
             S.append(edge)
 
     for v in G.nodes:
+
         cc[v] = (1 / p ** 2) * 2 * t_S[v] / (deg[v] * (deg[v] - 1))  # TODO qui può capitare division by zero (andre)
         # l'unico caso possibile è che ci sia un nodo con deg[v] == 1
         # cercando su internet ho trovato che di solito viene definito come undefined oppure 0
         # non mi pare Vandin abbia specificato qualcosa a riguardo nelle slide (?)
+        """
+                # takes into account nodes with deg[v] = 1, avoid division by 0
+                cc[v] = (1 / p ** 2) * 2 * t_S[v] / (deg[v] * (deg[v] - 1)) if deg[v] > 1 else 0 
+        """
 
     return cc
 
