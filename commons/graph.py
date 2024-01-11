@@ -202,15 +202,9 @@ def improvedEstimateLCC(G, p) -> dict:
             S.append(edge)
 
     for v in G.nodes:
-
-        cc[v] = (1 / p ** 2) * 2 * t_S[v] / (deg[v] * (deg[v] - 1))  # TODO qui può capitare division by zero (andre)
-        # l'unico caso possibile è che ci sia un nodo con deg[v] == 1
-        # cercando su internet ho trovato che di solito viene definito come undefined oppure 0
-        # non mi pare Vandin abbia specificato qualcosa a riguardo nelle slide (?)
-        """
-                # takes into account nodes with deg[v] = 1, avoid division by 0
-                cc[v] = (1 / p ** 2) * 2 * t_S[v] / (deg[v] * (deg[v] - 1)) if deg[v] > 1 else 0 
-        """
+        # takes into account nodes with deg[v] = 1, avoid division by 0
+        # 0 because these nodes are surely not involved in any triangle
+        cc[v] = (1 / p ** 2) * 2 * t_S[v] / (deg[v] * (deg[v] - 1))  if deg[v] > 1 else 0
 
     return cc
 
