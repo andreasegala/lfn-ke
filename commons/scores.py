@@ -81,8 +81,8 @@ def centrality_print_scores(parsed_articles, centrality_name, approximation, run
             
 
     #Step 2: Create folder /experiments/run_name
-    run_directory = 'experiments/'+ run_name
-    Path(run_directory).mkdir(exist_ok=True)
+    run_directory = './experiments/' + run_name
+    Path(run_directory).mkdir(parents=True, exist_ok=True)
 
     centrality_file = run_directory+'/'+attribute_name+".csv"
 
