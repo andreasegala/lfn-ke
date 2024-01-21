@@ -57,14 +57,13 @@ class Article:
         self.categories = categories
         self.graph = graphmaker.buildGraph(abstract)
         self.filename = filename
-        #self.kw = keywords  # che siano già da stemmare??
 
-        kws = []
+        kws = set()
         for keyword in keywords:
             tokens = nltk.word_tokenize(keyword)
             for token in tokens:
-                kws.append(graphmaker.stemmer.stem(token))
-        self.kw = kws
+                kws.add(graphmaker.stemmer.stem(token))
+        self.kw = list(kws)
 
     def setGraph(self, graphmaker) -> None:
         self.graph = graphmaker.buildGraph(self.abstract)
@@ -87,6 +86,7 @@ def parse_and_sample(sample_size, graphmaker) -> list: # list of Article objs
     sampled_paths = random.choices(allowed_paths, k=sample_size)
 
     # create Article objs
+    #for path in tqdm(sampled_paths):
     for path in sampled_paths:
         with open(path, 'r') as handler:
             # load JSON file
@@ -100,8 +100,12 @@ def parse_and_sample(sample_size, graphmaker) -> list: # list of Article objs
             filename = path.name
 
             # create Article and append to sampled list
-            new_article = Article(docID, abstract, categories, keywords, filename, graphmaker)
-            sampled_articles.append(new_article)
+            # TODO remove try catch
+            try:
+                new_article = Article(docID, abstract, categories, keywords, filename, graphmaker)
+                sampled_articles.append(new_article)
+            except:
+                print("file", str(path))
 
     return sampled_articles
 
