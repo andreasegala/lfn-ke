@@ -28,61 +28,43 @@ class GraphMaker:
 
     def buildGraph(self, text) -> nx.Graph: # (andre) ho tolto parametro filename, non usato
         k = 0.5
-
         font_size = 26
-        words_in_text = []
-        is_noun = lambda word, pos: pos[:2] == 'NN' and not (word in self.stopwords)
-        is_adjective_or_verb = lambda word, pos: (pos[:2] == 'JJ' or pos[:2] == 'VB') and not (word in self.stopwords)
 
-        for sent in text.split('.')[:-1]:
-            tokenized = nltk.word_tokenize(sent)
-            nouns_adj_ver = [word for (word, pos) in nltk.pos_tag(tokenized) if
-                             (is_noun(word, pos) or is_adjective_or_verb(word, pos))]
-            words_in_text.append(' '.join([word for word in nouns_adj_ver if not (
-                    len(word) <= 2)]))  # nouns_in_text becomes a list of Strings, each of which acts as list of nouns
+        sentences = []
+        is_noun = lambda word, pos: pos.startswith('NN') and word not in self.stopwords
+        is_adjective_or_verb = lambda word, pos: pos.startswith(('JJ', 'VB')) and word not in self.stopwords
 
-        words_list = []  # will determine the numbers and the id of the rows
+        for sentence in text.split('.'):
+            tokenized_sentence = nltk.word_tokenize(sentence)
+            nouns_adj_verbs = [word for word, pos in nltk.pos_tag(tokenized_sentence) if is_noun(word, pos) or is_adjective_or_verb(word, pos)]
+            sentences.append(' '.join([word for word in nouns_adj_verbs if len(word) > 2]))
 
-        for sent in words_in_text:  # deleting duplicates
-            temp = sent.split(' ')
-            for word in temp:  # stemming and adding stems
-                if self.stemmer.stem(word) not in words_list:
-                    if not (self.stemmer.stem(word) == ""):
-                        words_list.append(self.stemmer.stem(word))
+        word_list = {self.stemmer.stem(word) for sentence in sentences for word in sentence.split() if len(self.stemmer.stem(word))}
 
-        df = pd.DataFrame(np.zeros(shape=(len(words_list), 2)), columns=['Stems', 'neighbors'])
-        df['Stems'] = words_list
+        stem_neighbors_df = pd.DataFrame({
+            'stem': list(word_list),
+            'neighbors': ''
+        })
 
-        for sent in text.split('.'):
-            tokens = nltk.word_tokenize(sent)
-            stemmed_sent = [self.stemmer.stem(word) for (word, pos) in nltk.pos_tag(tokens) if
-                            is_noun(word, pos) or is_adjective_or_verb(word, pos)]
+        for sentence in text.split('.'):
+            tokens = nltk.word_tokenize(sentence)
+            stemmed_sentence = [self.stemmer.stem(word) for word, pos in nltk.pos_tag(tokens) if is_noun(word, pos) or is_adjective_or_verb(word, pos)]
 
-            for stem in words_list:
-                if stem in stemmed_sent:
-                    ind = df[df['Stems'] == stem].index[0]
-                    df['neighbors'][ind] = [ss for ss in stemmed_sent if not (ss == stem)]
-                    try:
-                        float(str(df['neighbors'][ind]))
-                        if (df['neighbors'][ind] == 0):
-                            print("This stem will cause the mistake: " + stem)
-                    except Exception:
-                        ops = 0
-                        del ops
-        G = nx.Graph()
-        color_map = []
-        for i in range(len(df)):
-            G.add_node(df['Stems'][i])
-            color_map.append('blue')
-            # print("questa iterazione considera come vicini: "+ df['neighbors'][i])
-            try:
-                for word in df['neighbors'][i]:
-                    G.add_edges_from([(df['Stems'][i], word)])
-            except TypeError:
-                ops = 0
-                del ops
-                # print("\n"+"I found problems in row containing stem "+ str(df['Stems'][i]))
-        return G
+            for stem in word_list:
+                if stem in stemmed_sentence:
+                    neighbors = {s for s in stemmed_sentence if s != stem}
+                    row_idx = stem_neighbors_df[stem_neighbors_df['stem'] == stem].index[0]
+                    stem_neighbors_df.at[row_idx, 'neighbors'] = neighbors
+
+        word_graph = nx.Graph()
+
+        for idx, row in stem_neighbors_df.iterrows():
+            stem = row['stem']
+            neighbors = row['neighbors']
+            word_graph.add_node(stem)
+            word_graph.add_edges_from([(stem, neighbor) for neighbor in neighbors])
+
+        return word_graph
 
 
 def printGraph(G) -> None:
@@ -109,9 +91,8 @@ def printGraph(G) -> None:
         else:
             color_list.append('blue')
 
-    plt.figure()#figsize=(40, 40))
-    nx.draw(G, pos, node_size=[(v + 1) * 200 for v in node_sizes], with_labels=True, node_color=color_list,
-            font_size=font_size)
+    plt.figure(figsize=(40, 40))
+    nx.draw(G, pos, node_size=[(v + 1) * 200 for v in node_sizes], with_labels=True, node_color=color_list, font_size=font_size)
     plt.show()
 
 
@@ -222,7 +203,12 @@ def approximateClosenessCentrality(G, k) -> dict:
         v_i = random.choice(nodes_list)
         # solve single source shortest path for v_i
         for v in nodes_list:
-            s[v] += (len(nx.shortest_path(G, v_i, v)) - 1)
+            path_length = 0
+            try:
+                path_length = len(nx.shortest_path(G, v_i, v))
+            except nx.NetworkXNoPath:
+                pass
+            s[v] += (path_length - 1)
 
     for v in nodes_list:
         c[v] = k * (n - 1) / (n * s[v])
