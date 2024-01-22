@@ -55,8 +55,11 @@ class Article:
         cleanAbstract = re.sub("['\",]", '', abstract)
         self.abstract = cleanAbstract
         self.categories = categories
-        self.graph = graphmaker.buildGraph(abstract)
         self.filename = filename
+
+        article_graph = graphmaker.buildGraph(abstract)
+        largest_connected_component = max(list(nx.connected_components(article_graph)), key=len)
+        self.graph = article_graph.subgraph(largest_connected_component).copy()
 
         kws = set()
         for keyword in keywords:
