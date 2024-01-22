@@ -1,4 +1,6 @@
 import networkx as nx
+from tqdm import tqdm
+
 import commons.parse
 import commons.graph
 from pathlib import Path
@@ -42,7 +44,7 @@ def centrality_print_scores(parsed_articles, centrality_name, approximation, run
 
             attribute_name= "LCC"
             for art in parsed_articles:
-                centrality_results = nx.improvedEstimateLCC(art.graph,1)
+                centrality_results = nx.clustering(art.graph, art.graph.nodes)
                 nx.set_node_attributes(art.graph, centrality_results, attribute_name)
         else:
             attribute_name= "approxLCC"
@@ -73,7 +75,7 @@ def centrality_print_scores(parsed_articles, centrality_name, approximation, run
         else:
             attribute_name= "approxBC"
             for art in parsed_articles:
-                centrality_results = commons.graph.betweenness_centrality(art.graph, k= 20)
+                centrality_results = nx.betweenness_centrality(art.graph, k=5)
                 nx.set_node_attributes(art.graph, centrality_results, attribute_name)
     else:
         raise Exception('Unknown centrality! Available options: BC (Betweenness), PR (PageRank), CC (Closenss), LCC (Local Clustering Coefficient)')
@@ -94,7 +96,7 @@ def centrality_print_scores(parsed_articles, centrality_name, approximation, run
 
     #fill in the df
 
-    for i in range(0,len(parsed_articles)): #will also be the row number
+    for i in tqdm(range(0,len(parsed_articles))): #will also be the row number
         
         article = parsed_articles[i]
         scores_df['ID'][i] = article.docID
