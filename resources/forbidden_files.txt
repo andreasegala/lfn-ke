@@ -4594,3 +4594,5 @@
 ../data/elsevier_oaccby_corpus/json/S2590162119300462.json
 ../data/elsevier_oaccby_corpus/json/S2665991319300426.json
 ../data/elsevier_oaccby_corpus/json/S8756328216302988.json
+../data/elsevier_oaccby_corpus/json/S2589004219304365.json
+../data/elsevier_oaccby_corpus/json/S2589004219304717.json

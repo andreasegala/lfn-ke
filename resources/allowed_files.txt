@@ -35027,8 +35027,6 @@
 ../data/elsevier_oaccby_corpus/json/S2589004219301956.json
 ../data/elsevier_oaccby_corpus/json/S2589004219302366.json
 ../data/elsevier_oaccby_corpus/json/S2589004219302391.json
-../data/elsevier_oaccby_corpus/json/S2589004219304365.json
-../data/elsevier_oaccby_corpus/json/S2589004219304717.json
 ../data/elsevier_oaccby_corpus/json/S2589014X18301282.json
 ../data/elsevier_oaccby_corpus/json/S2589014X19301872.json
 ../data/elsevier_oaccby_corpus/json/S2589152918300103.json
