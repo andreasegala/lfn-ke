@@ -6,6 +6,7 @@ import commons.graph
 from pathlib import Path
 import pandas as pd
 import numpy as np 
+import seaborn as sns
 
 def precision_recall(kw_true, kw_pred):
     # we can use sets since words (i.e., graph nodes) are all uniques
@@ -113,6 +114,50 @@ def centrality_print_scores(parsed_articles, centrality_name, approximation, run
 
     #Step 4: convert df into csv file
         scores_df.to_csv(centrality_file, index=False)
+
+def significant_differences(centrality_list, approximation, metric_name, run_name)-> None:
+    #Step 1: paths and folders + df initialization
+
+    run_dir_path = './experiments/'+run_name+'/'
+    
+    column_names = []
+
+    for cc in centrality_list:
+        if approximation==0:
+            #generate name of the column, which will also be the name of the file 
+            column_names.append(cc)
+        elif approximation==1:
+            column_names.append('approx'+cc)
+        else:
+            column_names.append(cc)
+            column_names.append('approx'+cc)
+    
+    df = pd.DataFrame(columns= column_names)
+
+    #Step 2: for each centrality in centrality_list fill in the df with the given metric
+
+    for c_name in column_names:
+
+        #find the correct file
+        c_path = Path(run_dir_path+c_name).with_suffix('.csv')
+
+        #from file extract the column named metric as a list
+        temp_df = pd.read_csv(c_path)
+        column_to_keep = temp_df[metric_name]
+        #add the column to needed df 
+        df[c_name] = column_to_keep
+        del temp_df
+    
+    #Step 3: perform the statistic analysis
+    
+    #Step 3.1: create and print a boxplot for mean and variance
+    sns.boxplot(x='variable', y='value', data=pd.melt(df)).set(xlabel='Centralities', ylabel=metric_name)
+    
+    #Step 3.2: Tukey HSD test to assess significance of differences: each group is the column of a df 
+    #TODO
+
+    
+        
 
 
 
