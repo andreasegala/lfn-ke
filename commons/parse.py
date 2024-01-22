@@ -86,8 +86,7 @@ def parse_and_sample(sample_size, graphmaker) -> list: # list of Article objs
     sampled_paths = random.choices(allowed_paths, k=sample_size)
 
     # create Article objs
-    #for path in tqdm(sampled_paths):
-    for path in sampled_paths:
+    for path in tqdm(sampled_paths):
         with open(path, 'r') as handler:
             # load JSON file
             json_file = json.load(handler)
