@@ -1,12 +1,12 @@
 # required libraries
 from pathlib import Path
-import random
 from tqdm import tqdm
+import commons.graph
 import json
 import networkx as nx
-import re
-import commons.graph
 import nltk
+import random
+import re
 
 
 def update_allowed_forbidden_files(graphmaker, min_nodes):
@@ -71,15 +71,11 @@ class Article:
                 kws.add(graphmaker.stemmer.stem(token))
         self.kw = list(kws)
 
-    # TODO ma serve?
-    def setGraph(self, graphmaker) -> None:
-        self.graph = graphmaker.buildGraph(self.abstract)
-
     def printGraph(self):
         commons.graph.printGraph(self.graph)
 
 
-def parse_and_sample(sample_size, graphmaker) -> list: # list of Article objs
+def parse_and_sample(sample_size, graphmaker) -> list:  # list of Article objs
     sampled_articles = []
     random.seed(3101960)
 

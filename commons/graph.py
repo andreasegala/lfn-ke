@@ -5,7 +5,6 @@ from pathlib import Path
 import networkx as nx
 import nltk
 import numpy as np
-import os
 import pandas as pd
 import random
 
@@ -24,31 +23,36 @@ class GraphMaker:
         elif stemmer == 'LAN':
             self.stemmer = LancasterStemmer()
         else:
-            raise Exception('Unknown stemmer! Available options: POR (Porter), SNO (Snowball, english), LAN (Lancaster)')
+            raise Exception(
+                'Unknown stemmer! Available options:\n\t- POR (Porter)\n\t- SNO (Snowball, english)\n\t- LAN (Lancaster)')
 
-    def buildGraph(self, text) -> nx.Graph: # (andre) ho tolto parametro filename, non usato
-        k = 0.5
-        font_size = 26
-
+    def buildGraph(self, text) -> nx.Graph:
         sentences = []
+        # helpers functions
         is_noun = lambda word, pos: pos.startswith('NN') and word not in self.stopwords
         is_adjective_or_verb = lambda word, pos: pos.startswith(('JJ', 'VB')) and word not in self.stopwords
 
+        # split the text in sentences and tokenize each
         for sentence in text.split('.'):
             tokenized_sentence = nltk.word_tokenize(sentence)
-            nouns_adj_verbs = [word for word, pos in nltk.pos_tag(tokenized_sentence) if is_noun(word, pos) or is_adjective_or_verb(word, pos)]
+            nouns_adj_verbs = [word for word, pos in nltk.pos_tag(tokenized_sentence) if
+                               is_noun(word, pos) or is_adjective_or_verb(word, pos)]
             sentences.append(' '.join([word for word in nouns_adj_verbs if len(word) > 2]))
 
+        # get the word list
         word_list = {self.stemmer.stem(word) for sentence in sentences for word in sentence.split() if len(self.stemmer.stem(word))}
 
+        # create a pd.DataFrame for each stem to store its neighbors
         stem_neighbors_df = pd.DataFrame({
             'stem': list(word_list),
             'neighbors': ''
         })
 
+        # retrieve neighbors for each stem
         for sentence in text.split('.'):
             tokens = nltk.word_tokenize(sentence)
-            stemmed_sentence = [self.stemmer.stem(word) for word, pos in nltk.pos_tag(tokens) if is_noun(word, pos) or is_adjective_or_verb(word, pos)]
+            stemmed_sentence = [self.stemmer.stem(word) for word, pos in nltk.pos_tag(tokens) if
+                                is_noun(word, pos) or is_adjective_or_verb(word, pos)]
 
             for stem in word_list:
                 if stem in stemmed_sentence:
@@ -56,6 +60,7 @@ class GraphMaker:
                     row_idx = stem_neighbors_df[stem_neighbors_df['stem'] == stem].index[0]
                     stem_neighbors_df.at[row_idx, 'neighbors'] = neighbors
 
+        # build the graph
         word_graph = nx.Graph()
 
         for idx, row in stem_neighbors_df.iterrows():
@@ -80,13 +85,11 @@ def printGraph(G) -> None:
 
     color_list = []
     for i in G.nodes:
-        # value = nltk.pos_tag([i])[0][1]
         value = d[i]
-
         # red nodes = the most important
-        if (value <= 10):
+        if value <= 10:
             color_list.append('yellow')
-        elif (value <= 20):
+        elif value <= 20:
             color_list.append('red')
         else:
             color_list.append('blue')
@@ -100,7 +103,7 @@ def localPageRankApprox(G) -> dict:
     nodes_list = G.nodes
     n = len(nodes_list)
     alpha = 0.85
-    computed_centralities = {}  # dizionario per le centralità calcolate
+    computed_centralities = {}  # dict for the computed centrality
     r = 10
     for u in nodes_list:
         # initializing for t=0
@@ -115,17 +118,18 @@ def localPageRankApprox(G) -> dict:
         for t in range(1, r + 1):
             layers[t] = {}
             inf_dict[t] = {}
-            # initializing layer t: we put in layer t only neighbors of nodes in layers[t-1] che non sono già stati visitati: elif caso 0
+            # initializing layer t
+            # we put in layer t only neighbors of nodes in layers[t-1] which have not already been visited
             last_visited = layers[t - 1]
             for v in last_visited:
                 for w in G.neighbors(v):
-                    # se w è un vicino che non è ancora stato visitato
+                    # if w is a neighbor that has not yet been visited
                     if t > 1:
                         if w not in last_visited and not w in layers[t - 2]:
                             layers[t][w] = 1
                     else:
                         layers[t][w] = 1
-            # ho inizializzato il layer t
+            # init layer t
             for v in layers[t]:
                 s = 0
                 for w in layers[t - 1]:
@@ -142,12 +146,11 @@ def localPageRankApprox(G) -> dict:
 def improvedEstimateLCC(G, p) -> dict:
     edges_list = G.edges
     S = []  # sample of edges
-    # sono grafi piccoli e stanno in memoria
+    # they're graph little enough to fit in memory
     t_S = {}
     deg = {}
     cc = {}
-    # random.seed(os.urandom) # TODO fix ? a me fa TypeError sta riga :( (andre)
-    random.seed(65165)  # intanto ho messo un seed a caso stile gatto sulla tastiera
+    random.seed(65165)
     for v in G.nodes:
         t_S[v] = 0
         deg[v] = 0
@@ -185,15 +188,14 @@ def improvedEstimateLCC(G, p) -> dict:
     for v in G.nodes:
         # takes into account nodes with deg[v] = 1, avoid division by 0
         # 0 because these nodes are surely not involved in any triangle
-        cc[v] = (1 / p ** 2) * 2 * t_S[v] / (deg[v] * (deg[v] - 1))  if deg[v] > 1 else 0
+        cc[v] = (1 / p ** 2) * 2 * t_S[v] / (deg[v] * (deg[v] - 1)) if deg[v] > 1 else 0
 
     return cc
 
 
 def approximateClosenessCentrality(G, k) -> dict:
     s = {}
-    # random.seed(os.urandom)  # TODO come riga 165
-    random.seed(854181)  # anche qui ho usato un comodo gatto da tastiera
+    random.seed(854181)
     nodes_list = list(G.nodes)
     n = len(nodes_list)
     c = {}
@@ -203,11 +205,7 @@ def approximateClosenessCentrality(G, k) -> dict:
         v_i = random.choice(nodes_list)
         # solve single source shortest path for v_i
         for v in nodes_list:
-            path_length = 0
-            try:
-                path_length = len(nx.shortest_path(G, v_i, v))
-            except nx.NetworkXNoPath:
-                pass
+            path_length = len(nx.shortest_path(G, v_i, v))
             s[v] += (path_length - 1)
 
     for v in nodes_list:
