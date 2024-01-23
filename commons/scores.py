@@ -1,6 +1,6 @@
 import networkx as nx
 from tqdm import tqdm
-from scipy import stats
+import scipy
 import commons.parse
 import commons.graph
 from pathlib import Path
@@ -161,9 +161,32 @@ def significant_differences(centrality_list, approximation, metric_name, run_nam
     for c_name in column_names:
        group_list.append(df[c_name]) 
 
-    res = stats.tukey_hsd(*group_list)
+    res = scipy.stats.tukey_hsd(*group_list)
     print(res)
-    
+
+def average_metric(metric_name,run_name) -> pd.DataFrame:
+
+    #Step 0: find the path to the right directory and list of the files to scan + df initialization
+    file_names = ['PR','approxPR','CC','approxCC','BC','approxBC','LCC','approxLCC']
+
+    run_dir_path = './experiments/'+run_name+'/'
+
+    df = pd.DataFrame(columns= file_names)
+
+    #Step 1: From each .csv file extract the column of the given metric and compute its average: save the value in the df
+    for nn in file_names:
+        #find the correct file
+        c_path = Path(run_dir_path+nn).with_suffix('.csv')
+
+        temp_df = pd.read_csv(c_path)
+        column_to_keep = temp_df[metric_name]
+        #add the average to needed df 
+        df[nn] = [np.mean(column_to_keep)]
+        del temp_df
+
+    return df
+
+
         
 
 
