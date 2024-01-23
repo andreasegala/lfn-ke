@@ -1,6 +1,6 @@
 import networkx as nx
 from tqdm import tqdm
-
+from scipy import stats
 import commons.parse
 import commons.graph
 from pathlib import Path
@@ -154,8 +154,15 @@ def significant_differences(centrality_list, approximation, metric_name, run_nam
     sns.boxplot(x='variable', y='value', data=pd.melt(df)).set(xlabel='Centralities', ylabel=metric_name)
     
     #Step 3.2: Tukey HSD test to assess significance of differences: each group is the column of a df 
-    #TODO
+    
+    #prepare list of groups
+    group_list =[]
 
+    for c_name in column_names:
+       group_list.append(df[c_name]) 
+
+    res = stats.tukey_hsd(*group_list)
+    print(res)
     
         
 
