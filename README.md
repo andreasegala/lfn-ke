@@ -24,7 +24,21 @@
 The goal of this project is to assess whether approximated centralities applied to co-occurrence networks can aid the task of keyword extraction, ranking the words from a text according to their relevance.
 ## Repository Structure
 
-# INSERT TREE HERE
+```
+lfn-ke/
+├── commons/
+│   ├── graph.py
+│   ├── parse.py
+│   └── scores.py
+├── experiments/
+├── images/
+├── resources/
+│   ├── allowed_files.txt
+│   └── longStopword.txt
+├── experiment_runner.ipynb
+├── README.md
+└── requirements.txt
+```
 
 The ```commons``` folder constitutes our library:
 - ```graph.py``` contains utilities to build and display graphs, and some of the approximate centrality algorithms
@@ -35,6 +49,8 @@ The run results are stored in the ```experiments``` folder, where each subfolder
 Each run is composed by ```.csv``` files which are the results in terms of Precision and Recall for a specified centrality.
 
 The ```resources``` folder store the stopwords list and the allowed files (i.e., JSON article files with all the required fields and whose graphs are large enough).
+
+```experiment_runner.ipynb``` is the file from which you can run the project: this file samples articles, computes centralities, saves the runs and shows the results.
 
 ## Requirements
 The project makes use of the following libraries:
