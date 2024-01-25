@@ -38,7 +38,8 @@ def centrality_print_scores(parsed_articles, centrality_name, approximation, run
         else:
             attribute_name = 'approxPR'
             for art in tqdm(parsed_articles):
-                centrality_results = commons.graph.localPageRankApprox(art.graph)
+                r = 5
+                centrality_results = commons.graph.localPageRankApprox(art.graph, r)
                 nx.set_node_attributes(art.graph, centrality_results, attribute_name)
     elif centrality_name == 'LCC':
         if approximation == 0:

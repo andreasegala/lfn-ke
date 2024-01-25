@@ -73,8 +73,8 @@ class GraphMaker:
 
 
 def printGraph(G) -> None:
-    k = 0.5
-    font_size = 26
+    k = 0.4
+    font_size = 28
     pos = nx.spring_layout(G, k)
 
     d = nx.degree(G)
@@ -99,12 +99,12 @@ def printGraph(G) -> None:
     plt.show()
 
 
-def localPageRankApprox(G) -> dict:
+def localPageRankApprox(G,r) -> dict:
     nodes_list = G.nodes
     n = len(nodes_list)
     alpha = 0.85
     computed_centralities = {}  # dict for the computed centrality
-    r = 10
+    
     for u in nodes_list:
         # initializing for t=0
         PR_u = np.zeros(r + 1)
