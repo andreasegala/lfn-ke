@@ -6,6 +6,7 @@
 * [Authors](#authors)
 * [Goals](#goals)
 * [Repository Structure](#Repository)
+* [Dataset](#dataset)
 * [Requirements](#Requirements)
 * [Usage](#Usage)
 * [Results](#results)
@@ -56,6 +57,7 @@ The ```resources``` folder store the stopwords list and the allowed files (i.e.,
 
 ```experiment_runner.ipynb``` is the file from which you can run the project: this file samples articles, computes centralities, saves the runs and shows the results.
 
+## Dataset
 The dataset can be downloaded [here](https://elsevier.digitalcommonsdata.com/datasets/zm33cdndxs/2).
 
 In order to make the project work you need to:
@@ -82,7 +84,7 @@ pip install -r requirements.txt
 
 ### Creating and visualizing a co-occurrence network
 Initialize a graph maker object to encapsulate a stemmer and a stopwords list:
-<!--- text = 'NetworkX is a Python package for the creation, manipulation, and study of the structure, dynamics, and functions of complex networks. With NetworkX you can load and store networks in standard and nonstandard data formats, generate many types of random and classic networks.' --->
+
 ```sh
 text = 'We introduce the Elsevier OA CC-BY corpus. This is the first open corpus of Scientific Research papers which has a representative sample from across scientific disciplines. This corpus not only includes the full text of the article, but also the metadata of the documents, along with the bibliographic information for each reference.'
 gm = commons.graph.GraphMaker('resources/longStopwords.txt', 'LAN')
@@ -101,7 +103,7 @@ Here is the result!
 
 ### Experiment Runner Notebook
 
-The notebook allows you to sample articles from the "Elsevier OA CC-By Corpus" (which can be found [here](https://elsevier.digitalcommonsdata.com/datasets/zm33cdndxs/2)) and to compute centrality metrics on the resulting co-occurrence graphs. It is also possible to visualize performance metrics with boxplots and Tukey HSD test.
+The notebook allows you to sample articles from the "Elsevier OA CC-By Corpus" and to compute centrality metrics on the resulting co-occurrence graphs. It is also possible to visualize performance metrics with boxplots and Tukey HSD test.
 
 ## Results
 Among the various applied centralities the Local Clustering Coefficient seem to provide the best Precision. However, we are aware that our model of the co-occurrence graph has some limitations.
