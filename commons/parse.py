@@ -28,7 +28,7 @@ def update_allowed_forbidden_files(graphmaker, min_nodes):
         json_file = json.load(file)
         file.close()
 
-        # check the keys and the larget connected component of the graph
+        # check the keys and the largest connected component of the graph
         # and marks the file as allowed or forbidden
         # it saves whole relative paths
         is_allowed = True
@@ -48,6 +48,7 @@ def update_allowed_forbidden_files(graphmaker, min_nodes):
     allowed_writer = open(Path('resources/allowed_files.txt'), 'w')
     allowed_writer.write('\n'.join(allowed_files))
     allowed_writer.close()
+    print(f'There are {len(allowed_files)} allowed files.')
 
 
 class Article:

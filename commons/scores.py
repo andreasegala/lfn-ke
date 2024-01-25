@@ -29,6 +29,7 @@ def centrality_print_scores(parsed_articles, centrality_name, approximation, run
 
     # step 1: compute the desired centrality
     print('Computing centrality...')
+    # PR = PageRank
     if centrality_name == 'PR':
         if approximation == 0:
             attribute_name = 'PR'
@@ -41,6 +42,7 @@ def centrality_print_scores(parsed_articles, centrality_name, approximation, run
                 r = 5
                 centrality_results = commons.graph.localPageRankApprox(art.graph, r)
                 nx.set_node_attributes(art.graph, centrality_results, attribute_name)
+    # LCC = Local Clustering Coefficient
     elif centrality_name == 'LCC':
         if approximation == 0:
             attribute_name = 'LCC'
@@ -52,6 +54,7 @@ def centrality_print_scores(parsed_articles, centrality_name, approximation, run
             for art in tqdm(parsed_articles):
                 centrality_results = commons.graph.improvedEstimateLCC(art.graph, 0.5)
                 nx.set_node_attributes(art.graph, centrality_results, attribute_name)
+    # CC = Closeness Centrality
     elif centrality_name == 'CC':
         if approximation == 0:
             attribute_name = 'CC'
@@ -63,6 +66,7 @@ def centrality_print_scores(parsed_articles, centrality_name, approximation, run
             for art in tqdm(parsed_articles):
                 centrality_results = commons.graph.approximateClosenessCentrality(art.graph, 10)
                 nx.set_node_attributes(art.graph, centrality_results, attribute_name)
+    # BC = Betweenness Centrality
     elif centrality_name == 'BC':
         if approximation == 0:
             attribute_name = 'BC'
