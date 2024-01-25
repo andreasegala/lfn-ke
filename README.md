@@ -97,7 +97,7 @@ commons.graph.printGraph(word_graph)
 ```
 
 Here is the result!
-![Screen Shot](images/screen_readme_2.png)
+![Screen Shot](images/screen_readme.png)
 
 ### Experiment Runner Notebook
 
