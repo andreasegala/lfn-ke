@@ -38,6 +38,10 @@ lfn-ke/
 ├── experiment_runner.ipynb
 ├── README.md
 └── requirements.txt
+data/
+└── elsevier_oaccby_corpus/
+    └── json/
+
 ```
 
 The ```commons``` folder constitutes our library:
@@ -51,6 +55,8 @@ Each run is composed by ```.csv``` files which are the results in terms of Preci
 The ```resources``` folder store the stopwords list and the allowed files (i.e., JSON article files with all the required fields and whose graphs are large enough).
 
 ```experiment_runner.ipynb``` is the file from which you can run the project: this file samples articles, computes centralities, saves the runs and shows the results.
+
+The dataset can be downloaded from https://researchcollaborations.elsevier.com/en/datasets/elsevier-oa-cc-by-corpus. Inside the dataset the json.zip file must be extracted and it's contents put in the json/ folder as seen in the repository structure.
 
 ## Requirements
 The project makes use of the following libraries:
