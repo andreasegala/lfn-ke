@@ -82,9 +82,9 @@ pip install -r requirements.txt
 
 ### Creating and visualizing a co-occurrence network
 Initialize a graph maker object to encapsulate a stemmer and a stopwords list:
+<!--- text = 'NetworkX is a Python package for the creation, manipulation, and study of the structure, dynamics, and functions of complex networks. With NetworkX you can load and store networks in standard and nonstandard data formats, generate many types of random and classic networks.' --->
 ```sh
-text = 'NetworkX is a Python package for the creation, manipulation, and study of the structure, dynamics, and functions of complex networks. With NetworkX you can load and store networks in standard and nonstandard data formats, generate many types of random and classic networks.'
-
+text = 'We introduce the Elsevier OA CC-BY corpus. This is the first open corpus of Scientific Research papers which has a representative sample from across scientific disciplines. This corpus not only includes the full text of the article, but also the metadata of the documents, along with the bibliographic information for each reference.'
 gm = commons.graph.GraphMaker('resources/longStopwords.txt', 'LAN')
 ```
 Build the graph for your text:
@@ -97,7 +97,7 @@ commons.graph.printGraph(word_graph)
 ```
 
 Here is the result!
-![Screen Shot](images/screen_readme.png)
+![Screen Shot](images/screen_readme_2.png)
 
 ### Experiment Runner Notebook
 
