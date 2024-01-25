@@ -86,7 +86,6 @@ def printGraph(G) -> None:
     color_list = []
     for i in G.nodes:
         value = d[i]
-        # red nodes = the most important
         if value <= 10:
             color_list.append('yellow')
         elif value <= 20:
@@ -95,7 +94,7 @@ def printGraph(G) -> None:
             color_list.append('blue')
 
     plt.figure(figsize=(40, 40))
-    nx.draw(G, pos, node_size=[(v + 1) * 200 for v in node_sizes], with_labels=True, node_color=color_list, font_size=font_size)
+    nx.draw(G, pos, node_size=[(v + 1) * 200 for v in node_sizes], with_labels=True, node_color=color_list, edge_color='gray', font_size=font_size)
     plt.show()
 
 
