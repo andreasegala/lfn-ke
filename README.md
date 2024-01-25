@@ -7,7 +7,7 @@
 * [Goals](#goals)
 * [Repository Structure](#Repository)
 * [Requirements](#Requirements)
-* [Some Usage Examples](#Some Usage Examples)
+* [Usage](#Usage)
 * [Results](#results)
 * [Acknowledgements](#acknowledgements)
 
@@ -67,7 +67,7 @@ To install the necessary libraries, it is possible to run the command:
 ```sh
 pip install -r requirements.txt
 ```
-#  Some Usage Examples
+#  Usage
 
 ### Creating and visualizing a co-occurrence network
 Initialize a graph maker object to encapsulate a stemmer and a stopwords list:
