@@ -56,8 +56,12 @@ The ```resources``` folder store the stopwords list and the allowed files (i.e.,
 
 ```experiment_runner.ipynb``` is the file from which you can run the project: this file samples articles, computes centralities, saves the runs and shows the results.
 
-The dataset can be downloaded from https://researchcollaborations.elsevier.com/en/datasets/elsevier-oa-cc-by-corpus.
-Inside the dataset the json.zip file must be extracted inside the ```elsevier_oaccby_corpus``` folder as seen in the repository structure.
+The dataset can be downloaded [here](https://elsevier.digitalcommonsdata.com/datasets/zm33cdndxs/2).
+
+In order to make the project work you need to:
+1. create the ```data``` folder, at the same level of the repository folder (as shown in the tree above)
+2. extract the .zip file of the dataset inside ```data```: this creates the ```data/elsevier_oaccby_corpus``` folder
+3. extract the ```json_articals.zip``` file: this creates the ```data/elsevier_oaccby_corpus/json``` folder
 
 ## Requirements
 The project makes use of the following libraries:
@@ -84,11 +88,11 @@ text = 'NetworkX is a Python package for the creation, manipulation, and study o
 gm = commons.graph.GraphMaker('resources/longStopwords.txt', 'LAN')
 ```
 Build the graph for your text:
-```s
+```sh
 word_graph = gm.buildGraph(text)
 ```
 Display a co-occurrence graph:
-```s
+```sh
 commons.graph.printGraph(word_graph)
 ```
 
