@@ -56,7 +56,8 @@ The ```resources``` folder store the stopwords list and the allowed files (i.e.,
 
 ```experiment_runner.ipynb``` is the file from which you can run the project: this file samples articles, computes centralities, saves the runs and shows the results.
 
-The dataset can be downloaded from https://researchcollaborations.elsevier.com/en/datasets/elsevier-oa-cc-by-corpus. Inside the dataset the json.zip file must be extracted and it's contents put in the json/ folder as seen in the repository structure.
+The dataset can be downloaded from https://researchcollaborations.elsevier.com/en/datasets/elsevier-oa-cc-by-corpus.
+Inside the dataset the json.zip file must be extracted and it's contents put in the ```json``` folder as seen in the repository structure.
 
 ## Requirements
 The project makes use of the following libraries:
